@@ -24,14 +24,6 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", {
   useFindAndModify: false,
 });
 
-// get all workouts
-
-// create workout
-
-// add workout
-
-// limit range
-
 require("./routes/apiRoutes")(app);
 require("./routes/htmlRoutes")(app);
 
