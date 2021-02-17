@@ -3,7 +3,7 @@ const { Workout } = require("../models");
 const router = require("express").Router();
 
 // getLastWorkout --find all--
-router.get("/api/workouts:id", (req, res) => {
+router.get("/api/workouts/:id", (req, res) => {
   Workout.find({})
     .then((workouts) => {
       res.json(workouts);
@@ -14,6 +14,31 @@ router.get("/api/workouts:id", (req, res) => {
 });
 
 // addExercise PUT req.params.id
+router.put("/workouts/:id", (req, res) => {
+  Workout.findByIdAndUpdate(
+    req.params.id,
+    {
+      $push: {
+        exercise: {
+          name: req.body.type,
+          type: req.body.name,
+          weight: req.body.weight,
+          sets: req.body.sets,
+          reps: req.body.reps,
+          duration: req.body.duration,
+          distance: req.body.distance,
+        },
+      },
+    },
+    (error, data) => {
+      if (error) {
+        res.send(error);
+      } else {
+        res.send(data);
+      }
+    }
+  );
+});
 
 // createWorkout POST req.query.params
 router.post("/api/workouts", ({ body }, res) => {
