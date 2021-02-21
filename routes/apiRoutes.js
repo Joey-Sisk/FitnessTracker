@@ -38,7 +38,7 @@ module.exports = function (app) {
   });
 
   // createWorkout POST req.query.params
-  app.post("/api/workouts", ({ body }, res) => {
+  app.post("/api/workouts", async ({ body }, res) => {
     const workout = new Workout(body);
     try {
       const newWorkout = await workout.create();
