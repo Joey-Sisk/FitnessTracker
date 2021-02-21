@@ -1,4 +1,4 @@
-var path = require("path");
+let path = require("path");
 
 module.exports = function (app) {
   app.get("/stats", function (req, res) {
