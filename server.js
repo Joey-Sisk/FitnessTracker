@@ -1,10 +1,12 @@
 const express = require("express");
-const app = express();
 const mongoose = require("mongoose");
-const path = require("path");
+// const path = require("path");
 const logger = require("morgan");
+const app = express();
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
+// const db = require("./models")
 
 app.use(logger("dev")); // these run after request, before routes
 app.use(express.urlencoded({ extended: true }));
@@ -22,8 +24,8 @@ const db = mongoose.connection;
 db.on("error", (error) => console.error(error));
 db.once("open", () => console.log("connected to Database"));
 
-app.use(require("./routes/apiRoutes"));
-app.use(require("./routes/htmlRoutes"));
+require("./routes/apiRoutes.js")(app);
+require("./routes/htmlRoutes.js")(app);
 
 app.listen(PORT, () => {
   console.log(`App running on port ${PORT}!`);
