@@ -1,5 +1,6 @@
 let path = require("path");
 
+// Connect to each html page
 module.exports = function (app) {
   app.get("/stats", function (req, res) {
     res.sendFile(path.join(__dirname, "../public/stats.html"));
@@ -9,4 +10,3 @@ module.exports = function (app) {
     res.sendFile(path.join(__dirname, "../public/exercise.html"));
   });
 };
-
