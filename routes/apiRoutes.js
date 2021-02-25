@@ -1,70 +1,68 @@
 const db = require("../models"); // connects schema to routes
 
+// ideally I'd like to build these as try/catch's and use async/await instead of .then
+
 // connects to rest of app
 module.exports = function (app) {
-  // getLastWorkout --find all--
+  // getLastWorkout
   app.get("/api/workouts", (req, res) => {
-    try {
-      db.Workout.aggregate([
-        {
-          $addFields: {
-            totalDuration: {
-              $sum: "$exercises.duration",
-            },
-          },
+    db.Workout.aggregate([
+      {
+        $addFields: {
+          totalDuration: { $sum: "$exercises.duration" },
         },
-      ]).then((data) => {
+      },
+    ])
+      .then((data) => {
         res.json(data);
+      })
+      .catch((error) => {
+        res.sendStatus(500).json(error);
       });
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
   });
 
   // addExercise
   app.put("/api/workouts/:id", (req, res) => {
-    try {
-      db.Workout.findByIdAndUpdate(
-        req.params.id,
-        { $push: { exercise: req.body } },
-        res.json(data)
-      );
-    } catch (err) {
-      res.json({ message: err.message });
-    }
+    db.Workout.findByIdAndUpdate(
+      req.params.id,
+      { $push: { exercise: req.body } },
+      (err, data) => {
+        if (err) return err;
+        else res.json(data);
+        // else res.status(400).json(data);
+      }
+    );
   });
 
   // createWorkout
   app.post("/api/workouts", (req, res) => {
-    try {
-      db.Workout.create({}, (err, data) => {
+    db.Workout.create({}, (err, data) => {
+      if (err) {
+        res.send(err);
+      } else {
         res.json(data);
-        // else res.status(400).json(data);
-      });
-    } catch (err) {
-      res.json({ message: err.message });
-    }
+      }
+      // else res.status(400).json(data);
+    });
   });
 
   // getWorkoutsInRange
   app.get("/api/workouts/range", (req, res) => {
-    try {
-      db.Workout.aggregate([
-        {
-          $addFields: {
-            totalDuration: {
-              $sum: "$exercises.duration",
-            },
-          },
+    db.Workout.aggregate([
+      {
+        $addFields: {
+          totalDuration: { $sum: "$exercises.duration" },
         },
-        {
-          $limit: 10,
-        },
-      ]).then((data) => {
+      },
+      {
+        $limit: 10,
+      },
+    ])
+      .then((data) => {
         res.json(data);
+      })
+      .catch((err) => {
+        res.status(500).json(err);
       });
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
   });
 };
