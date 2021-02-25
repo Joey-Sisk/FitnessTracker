@@ -5,6 +5,8 @@ const app = express(); // for communicating with server
 
 const PORT = process.env.PORT || 3000; // establishes location of connection
 
+const db = require("./models");
+
 app.use(logger("dev")); // these run after request, before routes
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -31,3 +33,4 @@ require("./routes/htmlRoutes.js")(app);
 app.listen(PORT, () => {
   console.log(`App running on port ${PORT}!`);
 });
+

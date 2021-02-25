@@ -1,63 +1,70 @@
 const db = require("../models"); // connects schema to routes
 
-// ideally I'd like to build these as try/catch's and use async/await instead of .then
-
 // connects to rest of app
 module.exports = function (app) {
-  // getLastWorkout
+  // getLastWorkout --find all--
   app.get("/api/workouts", (req, res) => {
-    db.Workout.aggregate([
-      {
-        $addFields: {
-          totalDuration: { $sum: "$exercises.duration" },
+    try {
+      db.Workout.aggregate([
+        {
+          $addFields: {
+            totalDuration: {
+              $sum: "$exercises.duration",
+            },
+          },
         },
-      },
-    ])
-      .then((data) => {
+      ]).then((data) => {
         res.json(data);
-      })
-      .catch((err) => {
-        res.sendStatus(500).json(err);
       });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
   });
 
   // addExercise
   app.put("/api/workouts/:id", (req, res) => {
-    db.Workout.findByIdAndUpdate(
-      req.params.id,
-      { $push: { exercise: req.body } },
-      (err, data) => {
-        if (err) return err;
-        else res.status(400).json(data);
-      }
-    );
+    try {
+      db.Workout.findByIdAndUpdate(
+        req.params.id,
+        { $push: { exercise: req.body } },
+        res.json(data)
+      );
+    } catch (err) {
+      res.json({ message: err.message });
+    }
   });
 
   // createWorkout
   app.post("/api/workouts", (req, res) => {
-    db.Workout.create({}, (err, data) => {
-      if (err) return err;
-      else res.status(400).json(data);
-    });
+    try {
+      db.Workout.create({}, (err, data) => {
+        res.json(data);
+        // else res.status(400).json(data);
+      });
+    } catch (err) {
+      res.json({ message: err.message });
+    }
   });
 
   // getWorkoutsInRange
   app.get("/api/workouts/range", (req, res) => {
-    db.Workout.aggregate([
-      {
-        $addFields: {
-          totalDuration: { $sum: "$exercises.duration" },
+    try {
+      db.Workout.aggregate([
+        {
+          $addFields: {
+            totalDuration: {
+              $sum: "$exercises.duration",
+            },
+          },
         },
-      },
-      {
-        $limit: 10,
-      },
-    ])
-      .then((data) => {
+        {
+          $limit: 10,
+        },
+      ]).then((data) => {
         res.json(data);
-      })
-      .catch((err) => {
-        res.status(500).json(err);
       });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
   });
 };
