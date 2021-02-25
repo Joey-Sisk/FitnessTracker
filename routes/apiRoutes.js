@@ -1,7 +1,5 @@
 const db = require("../models"); // connects schema to routes
 
-// ideally I'd like to build these as try/catch's and use async/await instead of .then
-
 // connects to rest of app
 module.exports = function (app) {
   // getLastWorkout
