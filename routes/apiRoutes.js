@@ -20,13 +20,18 @@ module.exports = function (app) {
   });
 
   // addExercise
-  app.put("/api/workouts/:id", (req, res) => {
-    db.Workout.findByIdAndUpdate(
-      req.params.id,
-      { $push: { exercise: req.body } },
+  app.put("/api/workouts/:id", ({ body, params }, res) => {
+    db.Workout.findOneAndUpdate(
+      { _id: params.id },
+      {
+        $push: { exercises: body },
+      },
       (err, data) => {
-        if (err) return err;
-        else res.json(data);
+        if (err) {
+          res.send(err);
+        } else {
+          res.json(data);
+        }
         // else res.status(400).json(data);
       }
     );
@@ -53,14 +58,14 @@ module.exports = function (app) {
         },
       },
       {
-        $limit: 10,
+        $limit: 20,
       },
     ])
       .then((data) => {
         res.json(data);
       })
       .catch((err) => {
-        res.status(500).json(err);
+        res.json(err);
       });
   });
 };
